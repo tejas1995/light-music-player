@@ -1,1 +1,1 @@
-# light-music-player
+# pyMusicPlayer
