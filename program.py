@@ -1,11 +1,13 @@
 from pydub import AudioSegment
 from pydub.playback import play
 
+import os
 from os import listdir, walk
 from os.path import isfile, join
 
 import threading
 from multiprocessing import Process, Value
+
 
 playlist = {}
 current_song = None
@@ -32,8 +34,6 @@ def printCommands():
 
 
 def play_playlist(name):
-    current_playlist = playlist[name]
-
     for song_file in playlist[name]:
         song = AudioSegment.from_mp3(song_file)
         current_song = song
@@ -69,6 +69,7 @@ while(quit is not True):
     command = raw_input()
 
     if(command == 'n'):
+        # Create new playlist
         playlist_name = raw_input("Enter name of playlist: ")
         if(playlist_name in playlist.keys()):
             print "This playlist already exists!"
@@ -77,17 +78,18 @@ while(quit is not True):
             if(create_from_folder == 'Y'):
                 songs_list = []
                 folder_name = raw_input("Enter folder name (relative to Music/ directory): ")
+                # Get all files in given folder, including those in subfolders
                 for root, directories, files in walk(join(MUSIC_DIR, folder_name)):
                     for filename in files:
-                        # Join the two strings in order to form the full filepath.
                         if(filename[-4:] == '.mp3'):
-                            songs_list.append(join(root, filename))  # Add it to the list.
+                            songs_list.append(join(root, filename))  
                 playlist[playlist_name] = songs_list
             else:
                 songs_list = []
                 playlist[playlist_name] = songs_list
         
     elif(command == 'a'):
+        # Add a song to existing playlist
         playlist_name = raw_input("Enter name of playlist: ")
         if(playlist_name in playlist.keys()):
             song_name = raw_input("Enter file name (relative to Music/ directory): ")
@@ -99,11 +101,14 @@ while(quit is not True):
             print "The playlist %s does not exist!" % (playlist_name)
         
     elif(command == 'p'):
+        # Play a given playlist, run in a second background process
         name = raw_input("Enter playlist name: ")
+        # If already currently playing, terminate existing process before creating new one
         if(play_process is not None):
             play_process.terminate()
             play_process.join()
 
+        current_playlist = playlist[name]
         play_process = Process(target = play_playlist, args=(name, ))
         play_process.start()
 
@@ -111,6 +116,7 @@ while(quit is not True):
         print 'Keys:', playlist.keys()
 
     elif(command == 'w'):
+        # Write all the playlists to list_playlists.txt
         print 'Saving playlist...'
         playlist_file = open('list_playlists.txt', 'w')
         for name in playlist.keys():
@@ -118,5 +124,12 @@ while(quit is not True):
             for song in playlist[name]:
                 playlist_file.write(song + '\n')
             playlist_file.write('--------------\n')
+        playlist_file.write('\n')
         playlist_file.close()
         print 'Playlist saved!'
+
+    elif(command == 'q'):
+        if(play_process is not None):
+            play_process.terminate()
+            play_process.join()
+        quit = True
