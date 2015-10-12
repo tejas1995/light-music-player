@@ -45,11 +45,11 @@ MUSIC_DIR = "/home/hp/Music/"
 
 printCommands()
 
-playlist_file = open("list_playlists.txt", "rw")
+playlist_file = open("list_playlists.txt", "r")
 file_lines = playlist_file.readlines()
+playlist_file.close()
 
-#add_new_playlist()
-'''
+#Build up playlists
 for line in file_lines:
     if(line[:6] == 'Name: '):
         playlist_name = line[6:].rstrip()
@@ -60,15 +60,12 @@ for line in file_lines:
             next_line_index += 1
         line = file_lines[next_line_index+1]
         playlist[playlist_name] = new_list
-'''
-#add_song_to_playlist()
 
-name = 'JT'
 quit = False
 play_process = None
 
 while(quit is not True):
-    print "Enter command: "
+    print "Enter command: ",
     command = raw_input()
 
     if(command == 'n'):
@@ -106,9 +103,20 @@ while(quit is not True):
         if(play_process is not None):
             play_process.terminate()
             play_process.join()
-            
+
         play_process = Process(target = play_playlist, args=(name, ))
         play_process.start()
 
     elif(command == 'k'):
         print 'Keys:', playlist.keys()
+
+    elif(command == 'w'):
+        print 'Saving playlist...'
+        playlist_file = open('list_playlists.txt', 'w')
+        for name in playlist.keys():
+            playlist_file.write('Name: ' + name + '\n')
+            for song in playlist[name]:
+                playlist_file.write(song + '\n')
+            playlist_file.write('--------------\n')
+        playlist_file.close()
+        print 'Playlist saved!'
