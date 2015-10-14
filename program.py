@@ -1,5 +1,4 @@
-from pydub import AudioSegment
-from pydub.playback import play
+import pyglet
 
 import os
 from os import listdir, walk
@@ -35,11 +34,10 @@ def printCommands():
 
 def play_playlist(name):
     for song_file in playlist[name]:
-        song = AudioSegment.from_mp3(song_file)
+        song = pyglet.media.load(song_file)
         current_song = song
-        play(song)
-        print "Here!"
-
+        song.play()
+        pyglet.app.run()
 
 MUSIC_DIR = "/home/hp/Music/"
 
@@ -108,9 +106,15 @@ while(quit is not True):
             play_process.terminate()
             play_process.join()
 
-        current_playlist = playlist[name]
-        play_process = Process(target = play_playlist, args=(name, ))
-        play_process.start()
+        try:
+            current_playlist = playlist[name]
+            play_process = Process(target = play_playlist, args=(name, ))
+            play_process.start()
+        except:
+            print "The playlist %s does not exist!" % name
+            print "The existing playlists are: "
+            for key in playlist.keys():
+                print key
 
     elif(command == 'k'):
         print 'Keys:', playlist.keys()
