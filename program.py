@@ -32,14 +32,11 @@ def printCommands():
     print 'Alt+W: Save Playlists\tAlt+Q: Quit'
 
 
-def play_playlist(name):
-    for song_file in playlist[name]:
-        song = pyglet.media.load(song_file)
-        current_song = song
-        song.play()
-        pyglet.app.run()
+def play_playlist(player):
+    pyglet.app.run()
 
-MUSIC_DIR = "/home/hp/Music/"
+
+MUSIC_DIR = "/home/tejas/Music/"
 
 printCommands()
 
@@ -47,7 +44,9 @@ playlist_file = open("list_playlists.txt", "r")
 file_lines = playlist_file.readlines()
 playlist_file.close()
 
-#Build up playlists
+player = None
+
+#Build up existing playlists
 for line in file_lines:
     if(line[:6] == 'Name: '):
         playlist_name = line[6:].rstrip()
@@ -107,8 +106,13 @@ while(quit is not True):
             play_process.join()
 
         try:
-            current_playlist = playlist[name]
-            play_process = Process(target = play_playlist, args=(name, ))
+            # current_playlist = playlist[name]
+            player = pyglet.media.Player()
+            for song_file in playlist[name]:
+                song = pyglet.media.load(song_file)
+                player.queue(song)
+            player.play()
+            play_process = Process(target = play_playlist, args=(player, ))
             play_process.start()
         except:
             print "The playlist %s does not exist!" % name
@@ -116,8 +120,22 @@ while(quit is not True):
             for key in playlist.keys():
                 print key
 
-    elif(command == 'k'):
-        print 'Keys:', playlist.keys()
+    elif(command == ' '):
+        # Play/pause current playlist
+        try:
+            if(player.playing is True):
+                player.pause()
+            else:
+                player.play()
+        except:
+            print "No playlist currently being played"
+
+    elif(command == 'x'):
+        # Next song in playlist
+        try:
+            player.next_source()
+        except:
+            print "No playlist currently being playes"
 
     elif(command == 'w'):
         # Write all the playlists to list_playlists.txt
