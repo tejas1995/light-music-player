@@ -102,6 +102,7 @@ while(quit is not True):
         name = raw_input("Enter playlist name: ")
         # If already currently playing, terminate existing process before creating new one
         if(play_process is not None):
+            player.delete()
             play_process.terminate()
             play_process.join()
 
@@ -152,6 +153,7 @@ while(quit is not True):
 
     elif(command == 'q'):
         if(play_process is not None):
+            player.delete()
             play_process.terminate()
             play_process.join()
         quit = True
