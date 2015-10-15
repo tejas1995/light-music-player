@@ -12,6 +12,22 @@ current_song = None
 current_playlist = None
 
 
+class _Getch:
+    def __init__(self):
+        import tty, sys
+
+    def __call__(self):
+        import sys, tty, termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
+
 def printCommands():
     print 'Alt+N: New Playlist\tAlt+A: Add Song to Playlist'
     print 'Alt+P: Play Playlist\tAlt+Space: Play/Pause Toggle'
@@ -46,11 +62,14 @@ for line in file_lines:
 
 quit = False
 play_process = None
-print '---------------------------------------'
+dash_line = '------------------------------------------------------------------'
+print dash_line
+
+getch = _Getch()
 
 while(quit is not True):
     os.system("stty -echo")
-    command = raw_input()
+    command = getch()
     os.system("stty echo")
 
     if(command == 'n'):
@@ -72,7 +91,7 @@ while(quit is not True):
             else:
                 songs_list = []
                 playlist[playlist_name] = songs_list
-        print '---------------------------------------'
+        print dash_line
         
     elif(command == 'a'):
         # Add a song to existing playlist
@@ -85,7 +104,7 @@ while(quit is not True):
                 print "The file %s does not exist!" % (MUSIC_DIR+song_name)
         else:
             print "The playlist %s does not exist!" % (playlist_name)
-        print '---------------------------------------'
+        print dash_line
         
     elif(command == 'p'):
         # Play a given playlist, run in a second background process
@@ -110,7 +129,7 @@ while(quit is not True):
             print "The existing playlists are: "
             for key in playlist.keys():
                 print key
-        print '---------------------------------------'
+        print dash_line
 
     elif(command == ' '):
         # Play/pause current playlist
@@ -121,7 +140,7 @@ while(quit is not True):
                 player.play()
         except:
             print "No playlist currently being played"
-            print '---------------------------------------'
+            print dash_line
 
     elif(command == 'x'):
         # Next song in playlist
@@ -129,7 +148,7 @@ while(quit is not True):
             player.next_source()
         except:
             print "No playlist currently being played"
-            print '---------------------------------------'
+            print dash_line
 
     elif(command == 'w'):
         # Write all the playlists to list_playlists.txt
@@ -143,7 +162,7 @@ while(quit is not True):
         playlist_file.write('\n')
         playlist_file.close()
         print 'Playlist saved!'
-        print '---------------------------------------'
+        print dash_line
 
     elif(command == 'q'):
         if(play_process is not None):
