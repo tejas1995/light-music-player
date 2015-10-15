@@ -29,11 +29,11 @@ class _Getch:
 
 
 def printCommands():
-    print 'Alt+N: New Playlist\tAlt+A: Add Song to Playlist'
-    print 'Alt+P: Play Playlist\tAlt+Space: Play/Pause Toggle'
-    print 'Alt+X: Next Song\tAlt+Z: Previous Song'
-    print 'Alt+R: Repeat Playlist\tAlt+S: Repeat Song'
-    print 'Alt+W: Save Playlists\tAlt+Q: Quit'
+    print 'n: New Playlist\t\ta: Add Song to Playlist'
+    print 'p: Play Playlist\tSpace: Play/Pause Toggle'
+    print 'x: Next Song\t\tz: Previous Song'
+    print 'r: Repeat Playlist\ts: Repeat Song'
+    print 'w: Save Playlists\tq: Quit'
 
 
 def play_playlist(player):
