@@ -79,7 +79,7 @@ while(quit is not True):
             print "This playlist already exists!"
         else:
             create_from_folder = raw_input("Import from folder? (Y/n) ")
-            if(create_from_folder == 'Y'):
+            if(create_from_folder == 'Y' or create_from_folder == 'y'):
                 songs_list = []
                 folder_name = raw_input("Enter folder name (relative to Music/ directory): ")
                 # Get all files in given folder, including those in subfolders
@@ -149,6 +149,19 @@ while(quit is not True):
         except:
             print "No playlist currently being played"
             print dash_line
+
+    elif(command == 'r'):
+        # Repeat playlist
+        try:
+            if(player._groups[-1]._loop is False):
+                player._groups[-1]._loop = True
+                print 'Repeat Song: ON'
+            else:
+                player._groups[-1]._loop = False
+                print 'Repeat Song: OFF'
+        except:
+            print "No playlist currently being played"
+        print dash_line
 
     elif(command == 'w'):
         # Write all the playlists to list_playlists.txt
