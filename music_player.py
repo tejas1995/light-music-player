@@ -12,6 +12,11 @@ class musicPlayer(pyglet.media.Player):
         self.queue(source)
         self.list_sources.append(source)
 
+    def add_to_playlist(self, list_song_names):
+        for song_file in list_song_names:
+            song = pyglet.media.load(song_file)
+            self.add_to_queue(song)
+
     def next_song(self):
         # Play the next song, set timestamp to 0 to play from beginning
         self.next_source()
