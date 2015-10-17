@@ -28,6 +28,34 @@ class _Getch:
         return ch
 
 
+class musicPlayer(pyglet.media.Player):
+
+    def __init__(self):
+        pyglet.media.Player.__init__(self)
+        self.dequeued_sources = []
+        self.list_sources = []
+
+    def add_to_queue(self, source):
+        # Add song to playlist queue, and to list of sources
+        self.queue(source)
+        self.list_sources.append(source)
+
+    def next_song(self):
+        # Play the next song, set timestamp to 0 to play from beginning
+        self.next_source()
+        self._groups[-1].seek(0)
+
+    def previous_song(self):
+        # Find and play the previous song, set timestamp to 0 to play from beginning
+        current_source = self._groups[-1]._sources[0]
+        prev_source = self.list_sources[ self.list_sources.index(current_source)-1 ]
+        self._groups[-1]._timestamp_offset -= prev_source.duration
+        self._groups[-1]._dequeued_durations = self._groups[-1]._dequeued_durations[1:]
+        self._groups[-1]._sources.insert(0, prev_source)
+        self._groups[-1].duration += prev_source.duration
+        self._groups[-1].seek(0)
+
+
 def printCommands():
     print 'n: New Playlist\t\ta: Add Song to Playlist'
     print 'p: Play Playlist\tSpace: Play/Pause Toggle'
@@ -117,10 +145,10 @@ while(quit is not True):
 
         try:
             # current_playlist = playlist[name]
-            player = pyglet.media.Player()
+            player = musicPlayer()
             for song_file in playlist[name]:
                 song = pyglet.media.load(song_file)
-                player.queue(song)
+                player.add_to_queue(song)
             player.play()
             play_process = Process(target = play_playlist, args=(player, ))
             play_process.start()
@@ -145,7 +173,14 @@ while(quit is not True):
     elif(command == 'x'):
         # Next song in playlist
         try:
-            player.next_source()
+            player.next_song()
+        except:
+            print "No playlist currently being played"
+            print dash_line
+
+    elif(command == 'z'):
+        try:
+            player.previous_song()
         except:
             print "No playlist currently being played"
             print dash_line
