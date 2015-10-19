@@ -7,16 +7,26 @@ class musicPlayer(pyglet.media.Player):
         self.dequeued_sources = []
         self.list_sources = []
 
-    def add_to_queue(self, source):
+    def add_to_queue(self, source, song_file):
         # Add song to playlist queue, and to list of sources
-        self.queue(source)
-        self.list_sources.append(source)
+        if(len(self._groups) > 0):
+            if(source.audio_format != self._groups[0].audio_format):
+                print 'The file %s is not of the same format as the other songs' % song_file
+            else:
+                self.queue(source)
+                self.list_sources.append(source)
+        else:
+            self.queue(source)
+            self.list_sources.append(source)
 
     def add_to_playlist(self, list_song_names):
         for song_file in list_song_names:
-            song = pyglet.media.load(song_file)
-            self.add_to_queue(song)
-
+            try:
+                song = pyglet.media.load(song_file)
+                self.add_to_queue(song, song_file)
+            except:
+                print 'Could not load song %s' % song_file
+            
     def next_song(self):
         # Play the next song, set timestamp to 0 to play from beginning
         self.next_source()
