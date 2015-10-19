@@ -40,7 +40,6 @@ def printCommands():
 def play_playlist(player):
     pyglet.app.run()
 
-
 MUSIC_DIR = "/home/tejas/Music/"
 
 printCommands()
@@ -119,9 +118,7 @@ while(quit is not True):
         try:
             # current_playlist = playlist[name]
             player = musicPlayer()
-            for song_file in playlist[name]:
-                song = pyglet.media.load(song_file)
-                player.add_to_queue(song)
+            player.add_to_playlist(playlist[name])
             player.play()
             play_process = Process(target = play_playlist, args=(player, ))
             play_process.start()
@@ -159,6 +156,14 @@ while(quit is not True):
             print dash_line
 
     elif(command == 'r'):
+        try:
+            player.add_to_playlist(playlist[name])
+            print 'Repeat Playlist: ON'
+        except:
+            print "No playlist currently being played"
+        print dash_line
+
+    elif(command == 's'):
         # Repeat playlist
         try:
             if(player._groups[-1]._loop is False):
