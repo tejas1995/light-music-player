@@ -178,7 +178,7 @@ while(quit is not True):
 
     elif(command == 'w'):
         # Write all the playlists to list_playlists.txt
-        print 'Saving playlist...'
+        print 'Saving playlists...'
         playlist_file = open('list_playlists.txt', 'w')
         for name in playlist.keys():
             playlist_file.write('Name: ' + name + '\n')
@@ -187,7 +187,7 @@ while(quit is not True):
             playlist_file.write('--------------\n')
         playlist_file.write('\n')
         playlist_file.close()
-        print 'Playlist saved!'
+        print 'Playlists saved!'
         print dash_line
 
     elif(command == 'q'):
