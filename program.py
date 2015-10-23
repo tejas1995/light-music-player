@@ -40,7 +40,7 @@ def printCommands():
 def play_playlist(player):
     pyglet.app.run()
 
-MUSIC_DIR = "/home/tejas/Music/"
+MUSIC_DIR = None
 
 printCommands()
 
@@ -50,7 +50,9 @@ playlist_file.close()
 
 #Build up existing playlists
 for line in file_lines:
-    if(line[:6] == 'Name: '):
+    if(line[:5] == 'DIR: '):
+        MUSIC_DIR = line[5:].rstrip()
+    elif(line[:6] == 'Name: '):
         playlist_name = line[6:].rstrip()
         new_list = []
         next_line_index = file_lines.index(line) + 1
@@ -59,6 +61,9 @@ for line in file_lines:
             next_line_index += 1
         line = file_lines[next_line_index+1]
         playlist[playlist_name] = new_list
+
+if(MUSIC_DIR is None):
+    MUSIC_DIR = raw_input('Enter path to Music/ directory: ')
 
 quit = False
 play_process = None
@@ -180,6 +185,7 @@ while(quit is not True):
         # Write all the playlists to list_playlists.txt
         print 'Saving playlists...'
         playlist_file = open('list_playlists.txt', 'w')
+        playlist_file.write('DIR: ' + MUSIC_DIR + '\n')
         for name in playlist.keys():
             playlist_file.write('Name: ' + name + '\n')
             for song in playlist[name]:
