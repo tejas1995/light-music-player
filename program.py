@@ -1,10 +1,10 @@
 import pyglet
 
 import os
-from os import listdir, walk
+from os import walk
 from os.path import isfile, join
 
-from multiprocessing import Process, Value
+from multiprocessing import Process
 
 from music_player import musicPlayer
 
@@ -15,10 +15,12 @@ current_playlist = None
 
 class _Getch:
     def __init__(self):
-        import tty, sys
+        pass
 
     def __call__(self):
-        import sys, tty, termios
+        import sys
+        import tty
+        import termios
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
         try:
@@ -91,13 +93,13 @@ while(quit is not True):
                 for root, directories, files in walk(join(MUSIC_DIR, folder_name)):
                     for filename in files:
                         if(filename[-4:] == '.mp3'):
-                            songs_list.append(join(root, filename))  
+                            songs_list.append(join(root, filename))
                 playlist[playlist_name] = songs_list
             else:
                 songs_list = []
                 playlist[playlist_name] = songs_list
         print dash_line
-        
+
     elif(command == 'a'):
         # Add a song to existing playlist
         playlist_name = raw_input("Enter name of playlist: ")
@@ -110,7 +112,7 @@ while(quit is not True):
         else:
             print "The playlist %s does not exist!" % (playlist_name)
         print dash_line
-        
+
     elif(command == 'p'):
         # Play a given playlist, run in a second background process
         name = raw_input("Enter playlist name: ")
@@ -125,7 +127,7 @@ while(quit is not True):
             player = musicPlayer()
             player.add_to_playlist(playlist[name])
             player.play()
-            play_process = Process(target = play_playlist, args=(player, ))
+            play_process = Process(target=play_playlist, args=(player, ))
             play_process.start()
         except:
             print "The playlist %s does not exist!" % name

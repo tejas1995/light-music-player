@@ -1,5 +1,6 @@
 import pyglet
 
+
 class musicPlayer(pyglet.media.Player):
 
     def __init__(self):
@@ -26,7 +27,7 @@ class musicPlayer(pyglet.media.Player):
                 self.add_to_queue(song, song_file)
             except:
                 print 'Could not load song %s' % song_file
-            
+
     def next_song(self):
         # Play the next song, set timestamp to 0 to play from beginning
         self.next_source()
@@ -35,10 +36,9 @@ class musicPlayer(pyglet.media.Player):
     def previous_song(self):
         # Find and play the previous song, set timestamp to 0 to play from beginning
         current_source = self._groups[-1]._sources[0]
-        prev_source = self.list_sources[ self.list_sources.index(current_source)-1 ]
+        prev_source = self.list_sources[self.list_sources.index(current_source)-1]
         self._groups[-1]._timestamp_offset -= prev_source.duration
         self._groups[-1]._dequeued_durations = self._groups[-1]._dequeued_durations[1:]
         self._groups[-1]._sources.insert(0, prev_source)
         self._groups[-1].duration += prev_source.duration
         self._groups[-1].seek(0)
-
